@@ -1,0 +1,50 @@
+.vue-select,
+.vue-select-header {
+  height: 100%;
+}
+
+.vue-select {
+  border-radius: 0;
+  border-top: 0px;
+  border-bottom: 0px;
+}
+
+.vue-select-header {
+  padding: 0 15px;
+  color: $c-gray;
+
+  @include media-breakpoint('mobile-small') {
+    padding: 0 5px;
+  }
+}
+
+.vue-dropdown {
+  top: 68px;
+}
+
+.vue-dropdown-item {
+  padding: 4px 20px;
+
+  @include media-breakpoint('mobile-small') {
+    padding: 4px 8px;
+  }
+}
+
+.vue-dropdown-item.selected,
+.vue-dropdown-item.highlighted,
+.vue-dropdown-item.selected.highlighted {
+  background-color: $c-l-gray;
+}
+
+.vue-input > input {
+  @extend .font-16-normal;
+  outline-width: 0;
+  outline: none;
+}
+
+.vue-dropdown-item.highlighted input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}

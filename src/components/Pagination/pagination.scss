@@ -1,0 +1,88 @@
+.pagination {
+  display: flex;
+  margin: 40px 0;
+  padding-left: 140px;
+
+  &__item {
+    list-style: none;
+
+    @include media-breakpoint('mobile-small') {
+      .pagination > & {
+        &:first-child,
+        &:last-child {
+          display: none;
+        }
+      }
+    }
+  }
+
+  &__button {
+    @extend .font-16-normal;
+    width: 40px;
+    height: 40px;
+    background-color: $c-white;
+    border: 1px solid $c-l-gray-reverse;
+    border-radius: 4px;
+    color: $c-l-gray-reverse;
+    margin-right: 9px;
+    cursor: pointer;
+
+    &.active {
+      background-color: $c-blue;
+      border: 1px solid $c-blue;
+      color: $c-white;
+
+      &:hover {
+        background-color: $c-blue;
+        border: 1px solid $c-blue;
+        color: $c-white;
+      }
+    }
+
+    &.next {
+      margin-right: 0;
+    }
+
+    &:hover {
+      color: $c-blue;
+    }
+
+    @include media-breakpoint('mobile-small') {
+      margin-right: 1px;
+    }
+  }
+
+  &__button-icon {
+    width: 0;
+    height: 0;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+
+    .prev & {
+      border-right: 9px solid $c-gray;
+      margin-left: 5px;
+    }
+
+    .prev:hover & {
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-right: 11px solid $c-blue;
+    }
+
+    .next & {
+      border-left: 9px solid $c-gray;
+      margin-left: 7px;
+    }
+
+    .next:hover & {
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 11px solid $c-blue;
+    }
+  }
+
+  @include media-breakpoint('mobile-small') {
+    padding-left: 0;
+    justify-content: center;
+  }
+}

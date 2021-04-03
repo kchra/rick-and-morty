@@ -1,0 +1,22 @@
+query getCharactersByEpisode($name: String, $episode: String) {
+  episodes(filter: { episode: $episode, name: $name }) {
+    info {
+      count
+      pages
+      next
+      prev
+    }
+    results {
+      characters {
+        id
+        name
+        species
+        gender
+        image
+        episode {
+          episode
+        }
+      }
+    }
+  }
+}
