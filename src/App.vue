@@ -119,7 +119,6 @@ export default defineComponent({
 
     const updateIsEmptyFavorites = (newValue: number) => {
       isEmptyFavorites.value = !newValue;
-      console.log('isEmpty', isEmptyFavorites.value);
     };
 
     const getCharactersByName = () => {
