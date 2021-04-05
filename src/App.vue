@@ -1,5 +1,5 @@
 <template>
-  <div v-if="results.query.loading">Loading...</div>
+  <div class="loader" v-if="results.query.loading">Loading...</div>
   <div v-else-if="results.characters" class="containter">
     <header class="main-header">
       <img class="main-header__logo" src="./assets/img/logo.svg" alt="" />
@@ -12,20 +12,23 @@
     <div class="main">
       <div class="tabs">
         <div class="tabs__buttons">
-          <div
+          <button
+            type="button"
             class="tabs__button"
             :class="{ active: activeTabName == 'all' }"
             @click="getCharacters()"
           >
             All Characters
-          </div>
-          <div
-            class="tabs__button"
+          </button>
+          <button
+            type="button"
+            class="tabs__button tooltip"
             :class="{ active: activeTabName == 'favorites' }"
             @click="getFavoriteCharacters()"
           >
+            <span v-if="isEmptyFavorites" class="tooltip__text">The favorite List is empty</span>
             Favorites
-          </div>
+          </button>
         </div>
       </div>
       <div v-if="results.query.error">
@@ -41,7 +44,10 @@
         </section>
       </div>
       <div v-else>
-        <CharactersTable :charactersListData="results.characters" />
+        <CharactersTable
+          :charactersListData="results.characters"
+          @update:favoritesListLength="updateIsEmptyFavorites"
+        />
         <Pagination
           v-if="paginationStatus"
           :currentPage="searchByName.page"
@@ -54,7 +60,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue';
+import {
+  defineComponent, reactive, ref,
+} from 'vue';
 import { useQuery, useResult } from '@vue/apollo-composable';
 
 import allCharactersQuery from '@graphql/characters.query/characters.query.graphql';
@@ -102,14 +110,19 @@ export default defineComponent({
       pagesInfo: {},
     });
 
+    const isEmptyFavorites = ref(true);
     const paginationStatus = ref(true);
-
     const queryGql = ref();
     const variablesGql = reactive({ gql: {} });
     const typeOfSort = ref(SEARCH_BY_NAMES.name);
     const activeTabName = ref(DEFAULT_TAB_NAME);
 
-    function getCharactersByName() {
+    const updateIsEmptyFavorites = (newValue: number) => {
+      isEmptyFavorites.value = !newValue;
+      console.log('isEmpty', isEmptyFavorites.value);
+    };
+
+    const getCharactersByName = () => {
       const { result, loading, error } = useQuery(allCharactersQuery, searchByName);
       const pagesResult = useResult(result, [], (data) => data.characters.info);
 
@@ -118,26 +131,26 @@ export default defineComponent({
       results.pagesInfo = pagesResult;
       results.query = { loading, error };
       paginationStatus.value = true;
-    }
+    };
 
-    function getCharactersByIds() {
+    const getCharactersByIds = () => {
       const { result, loading, error } = useQuery(getCharactersByIdQuery, searchByIDs);
       results.characters = useResult(result, [], (data) => data.charactersByIds);
       results.pagesTotal = 1;
       results.pagesInfo = {};
       results.query = { loading, error };
       paginationStatus.value = false;
-    }
+    };
 
-    function getCharactersByEpisode() {
+    const getCharactersByEpisode = () => {
       const { result, loading, error } = useQuery(getCharactersByEpisodeQuery, searchByEpisode);
       results.characters = useResult(result, [], (data) => data.episodes.results[0].characters);
       results.query = { loading, error };
       results.pagesInfo = {};
       paginationStatus.value = false;
-    }
+    };
 
-    function updateModelSearch(updatedSearchValue: string) {
+    const updateModelSearch = (updatedSearchValue: string) => {
       if (typeOfSort.value === SEARCH_BY_NAMES.id) {
         searchByIDs.ids = updatedSearchValue;
         queryGql.value = getCharactersByIdQuery;
@@ -170,28 +183,33 @@ export default defineComponent({
         variablesGql.gql = searchByEpisode;
         getCharactersByEpisode();
       }
-    }
+    };
 
-    function updateModelSearchBy(value: string) {
+    const updateModelSearchBy = (value: string) => {
       typeOfSort.value = value;
-    }
+    };
 
-    function updatePageValue(number: number) {
+    const updatePageValue = (number: number) => {
       searchByName.page = number > results.pagesTotal ? results.pagesTotal : number;
-    }
+    };
 
-    function getCharacters() {
+    const getCharacters = () => {
       typeOfSort.value = SEARCH_BY_NAMES.name;
       updateModelSearch('');
       activeTabName.value = 'all';
-    }
+    };
 
-    function getFavoriteCharacters() {
+    const getFavoriteCharacters = () => {
       const charactersIDs = JSON.parse(localStorage.getItem(FAVORITE_STORAGE_NAME) as string);
+
+      if (isEmptyFavorites.value) {
+        return;
+      }
+
       updateModelSearchBy('id');
       activeTabName.value = 'favorites';
       updateModelSearch(charactersIDs.toString());
-    }
+    };
 
     getCharactersByName();
 
@@ -206,14 +224,17 @@ export default defineComponent({
       getFavoriteCharacters,
       getCharacters,
       activeTabName,
+      isEmptyFavorites,
+      updateIsEmptyFavorites,
     };
   },
 });
 </script>
 
 <style lang="scss">
-@import '@/assets/scss/base/_fonts.scss';
 @import '@/assets/scss/base/_variables.scss';
 @import '@/assets/scss/base/_breakpoints.scss';
+@import '@/assets/scss/base/_fonts.scss';
+@import '@/assets/scss/tooltip.scss';
 @import '@/assets/scss/app.scss';
 </style>

@@ -57,6 +57,10 @@
       outline: 0;
     }
 
+    &::placeholder {
+      color: $c-gray;
+    }
+
     @include media-breakpoint('mobile-small') {
       width: 33.3%;
       margin-left: 10px;

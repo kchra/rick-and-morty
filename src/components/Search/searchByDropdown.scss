@@ -40,6 +40,10 @@
   @extend .font-16-normal;
   outline-width: 0;
   outline: none;
+
+  &::placeholder {
+    color: $c-gray;
+  }
 }
 
 .vue-dropdown-item.highlighted input:focus,

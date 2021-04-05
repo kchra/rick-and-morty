@@ -3,7 +3,7 @@ body {
   font-family: 'Poppins', sans-serif;
   font-size: 16px;
   font-weight: 400;
-  color: #a9b1bd;
+  color: $c-gray;
   width: 100%;
   height: 100%;
   padding: 0;
@@ -26,7 +26,7 @@ body {
 .main-header {
   display: flex;
   align-items: center;
-  margin: 35px 0 35px 140px;
+  padding: 35px 0 35px 140px;
 
   &__logo {
     height: 70px;
@@ -37,12 +37,14 @@ body {
       margin-right: 0;
     }
   }
+
   @include media-breakpoint('mobile') {
-    margin-left: 0;
+    padding-left: 0;
   }
+
   @include media-breakpoint('mobile-small') {
     flex-direction: column;
-    margin: 20px 0;
+    padding: 20px 0;
   }
 }
 
@@ -60,7 +62,15 @@ body {
       padding-left: 0;
     }
   }
+
   &__button {
+    @extend .font-16-normal;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+
     &:nth-child(1) {
       margin-right: 80px;
 
@@ -76,14 +86,15 @@ body {
   }
 }
 
+.loader {
+  padding: 20px;
+}
+
 .error {
   width: 100%;
   margin-top: 50px;
   display: flex;
   justify-content: center;
-
-  &__message {
-  }
 
   &__link {
     color: $c-blue;

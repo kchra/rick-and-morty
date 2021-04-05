@@ -40,9 +40,8 @@ export default defineComponent({
       type: Object as PropType<CharactersInterface>,
     },
   },
-  setup() {
+  setup(props, { emit }) {
     const favoritesList = ref<number[]>([]);
-
     const isFavorite = (id: number) => favoritesList.value.find((element) => element === id);
     const isStorage = () => localStorage.getItem(FAVORITE_STORAGE_NAME);
     const openStorage = () => JSON.parse(localStorage.getItem(FAVORITE_STORAGE_NAME) as string);
@@ -53,8 +52,6 @@ export default defineComponent({
     };
 
     const manageFavorites = (id: number) => {
-      console.log('ss', favoritesList.value);
-
       favoritesList.value = !isFavorite(id)
         ? (favoritesList.value = [...favoritesList.value, id])
         : removeItem(id);
@@ -67,11 +64,14 @@ export default defineComponent({
         } catch (error) {
           removeStorage();
         }
+      } else {
+        saveStorage(favoritesList.value);
       }
     });
 
     watch(favoritesList, (newValue) => {
       saveStorage(newValue);
+      emit('update:favoritesListLength', favoritesList.value.length);
     });
 
     return { isFavorite, manageFavorites };
@@ -80,8 +80,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '@/assets/scss/base/_fonts.scss';
 @import '@/assets/scss/base/_variables.scss';
 @import '@/assets/scss/base/_breakpoints.scss';
+@import '@/assets/scss/base/_fonts.scss';
 @import './charactersTable.scss';
 </style>

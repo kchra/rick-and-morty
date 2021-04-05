@@ -17,10 +17,6 @@ declare module 'lodash/find' {
   import  find  from 'lodash/find';
   export = find
 }
-// declare module "@/consts/*.js" {
-//   const consts: Object;
-//   export = consts;
-// }
 declare module "@/assets/scss/**/*.scss" {
   const styles: any;
   export = styles;

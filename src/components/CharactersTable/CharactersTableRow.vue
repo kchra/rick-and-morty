@@ -55,8 +55,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '@/assets/scss/base/_fonts.scss';
 @import '@/assets/scss/base/_variables.scss';
 @import '@/assets/scss/base/_breakpoints.scss';
+@import '@/assets/scss/base/_fonts.scss';
 @import './charactersTableRow.scss';
 </style>
