@@ -36,10 +36,10 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from "vue";
 
 export default defineComponent({
-  name: 'Pagination',
+  name: "Pagination",
   components: {},
   props: {
     pagesInfo: {
@@ -53,15 +53,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const pageNumber = ref(1);
-    const setPaginationNumber = (value: number) => {
-      if (!value) {
-        return;
-      }
-      pageNumber.value = value;
-      emit('managePage', pageNumber.value);
-    };
-    const returnActiveClass = (pageId: number) => (props.currentPage === pageId ? 'active' : '');
-    const returnPaginationValue = (value: number) => (value !== 0 ? value : '...');
+
     const currentPages = computed(() => {
       const arrayOfAllPages = Array.from({ length: props.pagesInfo.pages }, (v, k) => k + 1);
 
@@ -71,9 +63,9 @@ export default defineComponent({
         range.start = 0;
         range.end = 4;
       } else if (
-        props.pagesInfo.prev
-        && props.pagesInfo.next
-        && props.pagesInfo.next + 1 <= props.pagesInfo.pages
+        props.pagesInfo.prev &&
+        props.pagesInfo.next &&
+        props.pagesInfo.next + 1 <= props.pagesInfo.pages
       ) {
         range.start = props.pagesInfo.prev - 1;
         range.end = props.pagesInfo.next + 1;
@@ -93,6 +85,15 @@ export default defineComponent({
       }
       return selectedPages;
     });
+    const returnActiveClass = (pageId: number) => (props.currentPage === pageId ? "active" : "");
+    const returnPaginationValue = (value: number) => (value !== 0 ? value : "...");
+    const setPaginationNumber = (value: number) => {
+      if (!value) {
+        return;
+      }
+      pageNumber.value = value;
+      emit("managePage", pageNumber.value);
+    };
 
     return {
       setPaginationNumber,
@@ -105,8 +106,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '@/assets/scss/base/_variables.scss';
-@import '@/assets/scss/base/_breakpoints.scss';
-@import '@/assets/scss/base/_fonts.scss';
-@import './pagination.scss';
+@import "@/assets/scss/base/_variables.scss";
+@import "@/assets/scss/base/_breakpoints.scss";
+@import "@/assets/scss/base/_fonts.scss";
+@import "./pagination.scss";
 </style>

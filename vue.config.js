@@ -1,19 +1,19 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const path = require('path');
+const path = require("path");
 
 module.exports = {
   chainWebpack: (config) => {
     config.resolve.alias
-      .set('@', path.resolve(__dirname, 'src/'))
-      .set('@components', path.resolve(__dirname, 'src/components'))
-      .set('@graphql', path.resolve(__dirname, 'src/graphql'))
-      .set('@types', path.resolve(__dirname, 'src/types'))
-      .set('@consts', path.resolve(__dirname, 'src/consts'));
+      .set("@", path.resolve(__dirname, "src/"))
+      .set("@components", path.resolve(__dirname, "src/components"))
+      .set("@graphql", path.resolve(__dirname, "src/graphql"))
+      .set("@types", path.resolve(__dirname, "src/types"))
+      .set("@constans", path.resolve(__dirname, "src/constans"));
     config.module
-      .rule('graphql')
+      .rule("graphql")
       .test(/\.(graphql|gql)$/)
-      .use('graphql-tag/loader')
-      .loader('graphql-tag/loader')
+      .use("graphql-tag/loader")
+      .loader("graphql-tag/loader")
       .end();
   },
 };

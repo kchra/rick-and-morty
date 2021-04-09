@@ -23,10 +23,10 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'CharactersTableRow',
+  name: "CharactersTableRow",
   props: {
     id: { type: String, required: true },
     name: { type: String, required: true },
@@ -38,15 +38,15 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const favorite = computed({
-      get: () => (props.isFavorite ? 'active' : ''),
-      set: (value) => emit('update:isFavorite', value),
+      get: () => (props.isFavorite ? "active" : ""),
+      set: (value) => emit("update:isFavorite", value),
     });
 
     const genderIcons = {
-      Male: 'male',
-      Female: 'female',
-      unknown: 'remove',
-      Genderless: 'close',
+      Male: "male",
+      Female: "female",
+      unknown: "remove",
+      Genderless: "close",
     };
 
     return { favorite, genderIcons };
@@ -55,8 +55,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '@/assets/scss/base/_variables.scss';
-@import '@/assets/scss/base/_breakpoints.scss';
-@import '@/assets/scss/base/_fonts.scss';
-@import './charactersTableRow.scss';
+@import "@/assets/scss/base/_variables.scss";
+@import "@/assets/scss/base/_breakpoints.scss";
+@import "@/assets/scss/base/_fonts.scss";
+@import "./charactersTableRow.scss";
 </style>

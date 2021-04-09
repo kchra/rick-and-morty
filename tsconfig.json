@@ -3,16 +3,12 @@
     "target": "esnext",
     "module": "esnext",
     "strict": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "noImplicitReturns": true,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": false,
     "sourceMap": true,
     "baseUrl": ".",
     "types": ["webpack-env"],
@@ -21,7 +17,7 @@
       "@img": ["src/assests/images"],
       "@gql": ["src/graphql"],
       "@types": ["src/types"],
-      "@consts": ["src/consts"],
+      "@constans": ["src/constans"],
       "@": ["src"]
     },
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
@@ -32,9 +28,7 @@
     "src/**/*.vue",
     "src/**/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx",
-    "src/components/types/index.js",
-    "src/consts/*.js"
+    "tests/**/*.tsx"
   ],
   "exclude": ["node_modules"]
 }
