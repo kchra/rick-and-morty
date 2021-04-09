@@ -1,6 +1,6 @@
 {
   "name": "rick-and-morty",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -10,6 +10,7 @@
   "dependencies": {
     "@apollo/client": "3.3.12",
     "@vue/apollo-composable": "4.0.0-alpha.12",
+    "@vue/eslint-config-prettier": "^6.0.0",
     "core-js": "^3.6.5",
     "eslint-import-resolver-typescript": "2.4.0",
     "graphql": "15.5.0",
@@ -30,7 +31,6 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/eslint-config-airbnb": "^5.0.2",
-    "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
     "eslint": "6.8.0",
     "eslint-plugin-import": "^2.20.2",

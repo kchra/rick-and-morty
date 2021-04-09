@@ -39,7 +39,8 @@ export default defineComponent({
     const favoritesList = ref<number[]>([]);
     const favoritesLocalStorageName = inject("localStorageName") as any;
 
-    const isFavorite = (id: number) => favoritesList.value.find((element) => element === id);
+    const isFavorite = (id: number) =>
+      favoritesList.value.find((element: number) => element === id);
     const isStorage = () => localStorage.getItem(favoritesLocalStorageName);
     const openStorage = () => JSON.parse(localStorage.getItem(favoritesLocalStorageName) as string);
     const removeStorage = () => localStorage.removeItem(favoritesLocalStorageName);
