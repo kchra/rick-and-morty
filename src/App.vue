@@ -4,7 +4,7 @@
     <header class="main-header">
       <img class="main-header__logo" src="./assets/img/logo.svg" alt="" />
       <Search
-        :selectedOption="typeOfSort"
+        :selectedOption="sortTypeName"
         @modelSearch="updateModelSearch"
         @modelSearchBy="updateModelSearchBy"
       />
@@ -49,7 +49,7 @@
           @update:favoritesListLength="updateIsEmptyFavorites"
         />
         <Pagination
-          v-if="paginationStatus"
+          v-if="isPagination"
           :currentPage="searchByName.page"
           :pagesInfo="results.pagesInfo"
           @managePage="updatePageValue"
@@ -60,62 +60,64 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, reactive, ref, provide } from "vue";
+import { useQuery, useResult } from "@vue/apollo-composable";
+
+import allCharactersQuery from "@graphql/characters.query/characters.query.graphql";
+import getCharactersByIdQuery from "@graphql/characters.query/getCharactersById.query.graphql";
+import getCharactersByEpisodeQuery from "@graphql/characters.query/getCharactersByEpisode.query.graphql";
+
+import Search from "@components/Search/search.vue";
+import CharactersTable from "@components/CharactersTable/CharactersTable.vue";
+import Pagination from "@components/Pagination/Pagination.vue";
+
 import {
-  defineComponent, reactive, ref,
-} from 'vue';
-import { useQuery, useResult } from '@vue/apollo-composable';
+  SearchByNameInterface,
+  SearchByIDsInterface,
+  searchByEpisodeInterface,
+  ResultsInterface,
+} from "@types";
 
-import allCharactersQuery from '@graphql/characters.query/characters.query.graphql';
-import getCharactersByIdQuery from '@graphql/characters.query/getCharactersById.query.graphql';
-import getCharactersByEpisodeQuery from '@graphql/characters.query/getCharactersByEpisode.query.graphql';
+import SETTINGS from "./constans/settings";
 
-import Search from '@components/Search/search.vue';
-import CharactersTable from '@components/CharactersTable/CharactersTable.vue';
-import Pagination from '@components/Pagination/Pagination.vue';
-
-const DEFAULT_TAB_NAME = 'all';
-const FAVORITE_STORAGE_NAME = 'favoriteCharacters';
-const SEARCH_BY_NAMES = {
-  episode: 'episode',
-  id: 'id',
-  name: 'name',
-};
+const { key } = Object.values(SETTINGS.tabs).find((value) => value.default);
+const DEFAULT_TAB_NAME: string = key;
 
 export default defineComponent({
-  name: 'App',
+  name: "App",
   components: {
     Search,
     CharactersTable,
     Pagination,
   },
   setup() {
-    const searchByName = reactive({
+    const searchByName = reactive<SearchByNameInterface>({
       page: 1,
-      name: '',
+      name: "",
     });
 
-    const searchByIDs = reactive({
-      ids: '1,2,3',
+    const searchByIDs = reactive<SearchByIDsInterface>({
+      ids: "1,2,3",
     });
 
-    const searchByEpisode = reactive({
-      episode: '',
-      name: '',
+    const searchByEpisode = reactive<searchByEpisodeInterface>({
+      episode: "",
+      name: "",
     });
 
-    const results = reactive({
+    const results = reactive<ResultsInterface>({
       query: {},
       characters: {},
       pagesTotal: 0,
       pagesInfo: {},
     });
 
-    const isEmptyFavorites = ref(true);
-    const paginationStatus = ref(true);
-    const queryGql = ref();
-    const variablesGql = reactive({ gql: {} });
-    const typeOfSort = ref(SEARCH_BY_NAMES.name);
-    const activeTabName = ref(DEFAULT_TAB_NAME);
+    const isEmptyFavorites = ref<boolean>(true);
+    const isPagination = ref<boolean>(true);
+    const sortTypeName = ref<string>(SETTINGS.searchBy.name);
+    const activeTabName = ref<string>(DEFAULT_TAB_NAME);
+
+    provide("localStorageName", SETTINGS.favoritesStoreName);
 
     const updateIsEmptyFavorites = (newValue: number) => {
       isEmptyFavorites.value = !newValue;
@@ -129,7 +131,7 @@ export default defineComponent({
       results.pagesTotal = pagesResult.value.pages;
       results.pagesInfo = pagesResult;
       results.query = { loading, error };
-      paginationStatus.value = true;
+      isPagination.value = true;
     };
 
     const getCharactersByIds = () => {
@@ -138,7 +140,7 @@ export default defineComponent({
       results.pagesTotal = 1;
       results.pagesInfo = {};
       results.query = { loading, error };
-      paginationStatus.value = false;
+      isPagination.value = false;
     };
 
     const getCharactersByEpisode = () => {
@@ -146,46 +148,40 @@ export default defineComponent({
       results.characters = useResult(result, [], (data) => data.episodes.results[0].characters);
       results.query = { loading, error };
       results.pagesInfo = {};
-      paginationStatus.value = false;
+      isPagination.value = false;
     };
 
     const updateModelSearch = (updatedSearchValue: string) => {
-      if (typeOfSort.value === SEARCH_BY_NAMES.id) {
+      if (sortTypeName.value === SETTINGS.searchBy.id) {
         searchByIDs.ids = updatedSearchValue;
-        queryGql.value = getCharactersByIdQuery;
-        variablesGql.gql = searchByIDs;
         getCharactersByIds();
       }
 
-      if (typeOfSort.value === SEARCH_BY_NAMES.name) {
+      if (sortTypeName.value === SETTINGS.searchBy.name) {
         searchByName.name = updatedSearchValue;
-        queryGql.value = allCharactersQuery;
-        variablesGql.gql = searchByName;
         getCharactersByName();
       }
 
-      if (typeOfSort.value === SEARCH_BY_NAMES.episode) {
-        const [param, value] = updatedSearchValue.split(':');
+      if (sortTypeName.value === SETTINGS.searchBy.episode) {
+        const [param, value] = updatedSearchValue.split(":");
         if (!value) {
           searchByEpisode.episode = param;
-          searchByEpisode.name = '';
+          searchByEpisode.name = "";
         }
-        if (param === SEARCH_BY_NAMES.name) {
+        if (param === SETTINGS.searchBy.name) {
           searchByEpisode.name = value;
-          searchByEpisode.episode = '';
+          searchByEpisode.episode = "";
         }
-        if (param === SEARCH_BY_NAMES.episode) {
+        if (param === SETTINGS.searchBy.episode) {
           searchByEpisode.episode = value;
-          searchByEpisode.name = '';
+          searchByEpisode.name = "";
         }
-        queryGql.value = getCharactersByEpisodeQuery;
-        variablesGql.gql = searchByEpisode;
         getCharactersByEpisode();
       }
     };
 
     const updateModelSearchBy = (value: string) => {
-      typeOfSort.value = value;
+      sortTypeName.value = value;
     };
 
     const updatePageValue = (number: number) => {
@@ -193,20 +189,20 @@ export default defineComponent({
     };
 
     const getCharacters = () => {
-      typeOfSort.value = SEARCH_BY_NAMES.name;
-      updateModelSearch('');
-      activeTabName.value = 'all';
+      sortTypeName.value = SETTINGS.searchBy.name;
+      activeTabName.value = SETTINGS.tabs.all.key;
+      updateModelSearch("");
     };
 
     const getFavoriteCharacters = () => {
-      const charactersIDs = JSON.parse(localStorage.getItem(FAVORITE_STORAGE_NAME) as string);
+      const charactersIDs = JSON.parse(localStorage.getItem(SETTINGS.favoritesStoreName) as string);
 
       if (isEmptyFavorites.value) {
         return;
       }
 
-      updateModelSearchBy('id');
-      activeTabName.value = 'favorites';
+      updateModelSearchBy(SETTINGS.searchBy.id);
+      activeTabName.value = SETTINGS.tabs.favorites.key;
       updateModelSearch(charactersIDs.toString());
     };
 
@@ -217,8 +213,8 @@ export default defineComponent({
       updateModelSearch,
       updateModelSearchBy,
       updatePageValue,
-      typeOfSort,
-      paginationStatus,
+      sortTypeName,
+      isPagination,
       searchByName,
       getFavoriteCharacters,
       getCharacters,
@@ -231,9 +227,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '@/assets/scss/base/_variables.scss';
-@import '@/assets/scss/base/_breakpoints.scss';
-@import '@/assets/scss/base/_fonts.scss';
-@import '@/assets/scss/tooltip.scss';
-@import '@/assets/scss/app.scss';
+@import "@/assets/scss/base/_variables.scss";
+@import "@/assets/scss/base/_breakpoints.scss";
+@import "@/assets/scss/base/_fonts.scss";
+@import "@/assets/scss/tooltip.scss";
+@import "@/assets/scss/app.scss";
 </style>

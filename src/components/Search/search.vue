@@ -4,6 +4,7 @@
     <VueSelect
       v-model="searchBy"
       :options="options"
+      :min="1"
       label-by="name"
       class="search__dropdown"
       close-on-select
@@ -22,35 +23,31 @@
 </template>
 
 <script lang="ts">
-import {
-  computed, defineComponent, ref, watch,
-} from 'vue';
-import VueSelect from 'vue-next-select';
-import find from 'lodash/find';
+import { computed, defineComponent, ref, watch } from "vue";
+import VueSelect from "vue-next-select";
+import SETTINGS from "../../constans/settings";
 
 export default defineComponent({
-  name: 'Search',
+  name: "Search",
   components: { VueSelect },
   props: {
     selectedOption: { type: String },
   },
   setup(props, { emit }) {
-    const options = ref([
-      { name: 'Name', value: 'name' },
-      { name: 'Identifier', value: 'id' },
-      { name: 'Episode', value: 'episode' },
-    ]);
-
-    const searchBy = ref(find(options.value, { value: props.selectedOption }));
+    const serchByValue = ref(
+      Object.values(SETTINGS.dropdownOptions).find((value) => value.value === props.selectedOption)
+    );
+    const options = ref(SETTINGS.dropdownOptions);
+    const searchBy = ref(serchByValue);
     const search = ref(null);
-
     const isEmptySearchValue = computed(() => !search.value);
+
     const submitSearch = () => {
-      emit('modelSearch', search.value);
+      emit("modelSearch", search.value);
     };
 
     watch(searchBy, (currentSearchBy) => {
-      emit('modelSearchBy', currentSearchBy.value);
+      emit("modelSearchBy", currentSearchBy.value);
     });
 
     return {
@@ -65,10 +62,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '../../../node_modules/vue-next-select/dist/index.min.css';
-@import '@/assets/scss/base/_variables.scss';
-@import '@/assets/scss/base/_fonts.scss';
-@import '@/assets/scss/base/_breakpoints.scss';
-@import './search.scss';
-@import './searchByDropdown.scss';
+@import "../../../node_modules/vue-next-select/dist/index.min.css";
+@import "@/assets/scss/base/_variables.scss";
+@import "@/assets/scss/base/_fonts.scss";
+@import "@/assets/scss/base/_breakpoints.scss";
+@import "./search.scss";
+@import "./searchByDropdown.scss";
 </style>

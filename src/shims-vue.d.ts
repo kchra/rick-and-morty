@@ -26,3 +26,8 @@ declare module "@/assets/css/*.css" {
   const styles: any;
   export = styles;
 }
+
+declare module '@/constans/*.js' {
+  const consts: any;
+  export = consts;
+}

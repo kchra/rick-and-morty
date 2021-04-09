@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 <template>
   <table class="characters">
     <tr class="table__titles-container">
@@ -23,17 +22,13 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent, onMounted, PropType, ref, watch,
-} from 'vue';
+import { defineComponent, inject, onMounted, PropType, ref, watch } from "vue";
 
-import { CharactersInterface } from '@types';
-import CharactersTableRow from './CharactersTableRow.vue';
-
-const FAVORITE_STORAGE_NAME = 'favoriteCharacters';
+import { CharactersInterface } from "@types";
+import CharactersTableRow from "./CharactersTableRow.vue";
 
 export default defineComponent({
-  name: 'CharactersTable',
+  name: "CharactersTable",
   components: { CharactersTableRow },
   props: {
     charactersListData: {
@@ -42,13 +37,15 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const favoritesList = ref<number[]>([]);
+    const favoritesLocalStorageName = inject("localStorageName") as any;
+
     const isFavorite = (id: number) => favoritesList.value.find((element) => element === id);
-    const isStorage = () => localStorage.getItem(FAVORITE_STORAGE_NAME);
-    const openStorage = () => JSON.parse(localStorage.getItem(FAVORITE_STORAGE_NAME) as string);
-    const removeStorage = () => localStorage.removeItem(FAVORITE_STORAGE_NAME);
+    const isStorage = () => localStorage.getItem(favoritesLocalStorageName);
+    const openStorage = () => JSON.parse(localStorage.getItem(favoritesLocalStorageName) as string);
+    const removeStorage = () => localStorage.removeItem(favoritesLocalStorageName);
     const removeItem = (id: number) => favoritesList.value.filter((elem: number) => elem !== id);
     const saveStorage = (data: unknown) => {
-      localStorage.setItem(FAVORITE_STORAGE_NAME, JSON.stringify(data));
+      localStorage.setItem(favoritesLocalStorageName, JSON.stringify(data));
     };
 
     const manageFavorites = (id: number) => {
@@ -71,7 +68,7 @@ export default defineComponent({
 
     watch(favoritesList, (newValue) => {
       saveStorage(newValue);
-      emit('update:favoritesListLength', favoritesList.value.length);
+      emit("update:favoritesListLength", favoritesList.value.length);
     });
 
     return { isFavorite, manageFavorites };
@@ -80,8 +77,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '@/assets/scss/base/_variables.scss';
-@import '@/assets/scss/base/_breakpoints.scss';
-@import '@/assets/scss/base/_fonts.scss';
-@import './charactersTable.scss';
+@import "@/assets/scss/base/_variables.scss";
+@import "@/assets/scss/base/_breakpoints.scss";
+@import "@/assets/scss/base/_fonts.scss";
+@import "./charactersTable.scss";
 </style>
