@@ -6,9 +6,10 @@ module.exports = {
     config.resolve.alias
       .set("@", path.resolve(__dirname, "src/"))
       .set("@components", path.resolve(__dirname, "src/components"))
+      .set("@constans", path.resolve(__dirname, "src/constans"))
       .set("@graphql", path.resolve(__dirname, "src/graphql"))
       .set("@types", path.resolve(__dirname, "src/types"))
-      .set("@constans", path.resolve(__dirname, "src/constans"));
+      .set("@use", path.resolve(__dirname, "src/use"));
     config.module
       .rule("graphql")
       .test(/\.(graphql|gql)$/)

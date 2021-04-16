@@ -12,7 +12,7 @@
     </tr>
     <tr class="table__items-container" v-for="character in charactersListData" :key="character.id">
       <CharactersTableRow
-        :isFavorite="isFavorite(character.id)"
+        :isFavorite="useLocaStorageItemExists(character.id)"
         v-bind="character"
         @update:isFavorite="manageFavorites"
       >
@@ -22,9 +22,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, onMounted, PropType, ref, watch } from "vue";
+import { defineComponent, inject, onMounted, PropType, watch } from "vue";
 
 import { CharactersInterface } from "@types";
+import {
+  useReturnLocalStorageData,
+  useGetLocalStorage,
+  useSetLocalStorage,
+  useLocaStorageItemExists,
+  useAddItemToLocalStorage,
+  useRemoveItemFromLocalStorage,
+  useRemoveLocalStorage,
+  useLocalStorageExists,
+} from "../../use/localStorage";
+
 import CharactersTableRow from "./CharactersTableRow.vue";
 
 export default defineComponent({
@@ -36,43 +47,33 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const favoritesList = ref<number[]>([]);
-    const favoritesLocalStorageName = inject("localStorageName") as any;
-
-    const isFavorite = (id: number) =>
-      favoritesList.value.find((element: number) => element === id);
-    const isStorage = () => localStorage.getItem(favoritesLocalStorageName);
-    const openStorage = () => JSON.parse(localStorage.getItem(favoritesLocalStorageName) as string);
-    const removeStorage = () => localStorage.removeItem(favoritesLocalStorageName);
-    const removeItem = (id: number) => favoritesList.value.filter((elem: number) => elem !== id);
-    const saveStorage = (data: unknown) => {
-      localStorage.setItem(favoritesLocalStorageName, JSON.stringify(data));
-    };
+    const localStorageName = inject("localStorageName") as string;
+    const storageData = useReturnLocalStorageData();
 
     const manageFavorites = (id: number) => {
-      favoritesList.value = !isFavorite(id)
-        ? (favoritesList.value = [...favoritesList.value, id])
-        : removeItem(id);
+      !useLocaStorageItemExists(id)
+        ? useAddItemToLocalStorage(id)
+        : useRemoveItemFromLocalStorage(id);
     };
 
     onMounted(() => {
-      if (isStorage()) {
+      if (!useLocalStorageExists(localStorageName)) {
         try {
-          favoritesList.value = openStorage();
-        } catch (error) {
-          removeStorage();
+          useSetLocalStorage(localStorageName, storageData.value);
+        } catch {
+          useRemoveLocalStorage(localStorageName);
         }
       } else {
-        saveStorage(favoritesList.value);
+        storageData.value = useGetLocalStorage(localStorageName);
       }
     });
 
-    watch(favoritesList, (newValue) => {
-      saveStorage(newValue);
-      emit("update:favoritesListLength", favoritesList.value.length);
+    watch(storageData, (newValue) => {
+      useSetLocalStorage(localStorageName, newValue);
+      emit("update:favoritesListLength", storageData.value.length);
     });
 
-    return { isFavorite, manageFavorites };
+    return { useLocaStorageItemExists, manageFavorites };
   },
 });
 </script>

@@ -1,6 +1,6 @@
 html,
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 16px;
   font-weight: 400;
   color: $c-gray;
@@ -13,7 +13,7 @@ body {
 .containter {
   width: 100%;
 
-  @include media-breakpoint('mobile-small') {
+  @include media-breakpoint("mobile-small") {
     padding: 0 10px;
   }
 }
@@ -32,17 +32,17 @@ body {
     height: 70px;
     margin-right: 80px;
 
-    @include media-breakpoint('mobile-small') {
+    @include media-breakpoint("mobile-small") {
       margin-bottom: 20px;
       margin-right: 0;
     }
   }
 
-  @include media-breakpoint('mobile') {
+  @include media-breakpoint("mobile") {
     padding-left: 0;
   }
 
-  @include media-breakpoint('mobile-small') {
+  @include media-breakpoint("mobile-small") {
     flex-direction: column;
     padding: 20px 0;
   }
@@ -56,7 +56,7 @@ body {
     height: 84px;
     padding-left: 140px;
 
-    @include media-breakpoint('mobile-small') {
+    @include media-breakpoint("mobile-small") {
       align-items: center;
       justify-content: space-evenly;
       padding-left: 0;
@@ -70,14 +70,12 @@ body {
     padding: 0;
     cursor: pointer;
     position: relative;
+    margin-right: 80px;
 
-    &:nth-child(1) {
-      margin-right: 80px;
-
-      @include media-breakpoint('mobile-small') {
-        margin-right: 0;
-      }
+    &:nth-last-child(1) {
+      margin-right: 0;
     }
+
     &.active {
       color: $c-blue;
       border-bottom: 3px solid $c-blue;

@@ -16,6 +16,7 @@ interface SettingsTabsInterface {
 interface SettingsTabsItemsInterface {
   all: SettingsTabsInterface;
   favorites: SettingsTabsInterface;
+  search: SettingsTabsInterface;
 }
 
 interface SettingsSearchByInterface {
@@ -25,7 +26,7 @@ interface SettingsSearchByInterface {
 }
 
 interface SettingsDropdownOptionsInterface {
-  [index: number]: { name: string; value: string };
+  [index: number]: { name: string, value: string };
 }
 
 interface SettingsInterface {
@@ -37,11 +38,11 @@ interface SettingsInterface {
 
 interface SearchByNameInterface {
   page?: number | string;
-  name?: string;
+  name: string | null;
 }
 
 interface SearchByIDsInterface {
-  ids?: string;
+  ids: string | null;
 }
 
 interface searchByEpisodeInterface {
@@ -56,6 +57,16 @@ interface ResultsInterface {
   pagesInfo?: Record<string, unknown>;
 }
 
+interface SearchUpdateInterface {
+  value: string | null;
+  origin?: string;
+}
+
+interface LocalStorageInterface {
+  storageData: [];
+  error?: string;
+}
+
 export {
   CharactersInterface,
   SettingsInterface,
@@ -63,4 +74,6 @@ export {
   SearchByIDsInterface,
   searchByEpisodeInterface,
   ResultsInterface,
+  SearchUpdateInterface,
+  LocalStorageInterface,
 };

@@ -29,6 +29,14 @@
             <span v-if="isEmptyFavorites" class="tooltip__text">The favorite List is empty</span>
             Favorites
           </button>
+          <button
+            v-if="searchValue"
+            type="button"
+            class="tabs__button"
+            :class="{ active: activeTabName == 'search' }"
+          >
+            Search result for: {{ searchValue }}
+          </button>
         </div>
       </div>
       <div v-if="results.query.error">
@@ -66,6 +74,7 @@ import { useQuery, useResult } from "@vue/apollo-composable";
 import allCharactersQuery from "@graphql/characters.query/characters.query.graphql";
 import getCharactersByIdQuery from "@graphql/characters.query/getCharactersById.query.graphql";
 import getCharactersByEpisodeQuery from "@graphql/characters.query/getCharactersByEpisode.query.graphql";
+import { useGetLocalStorage } from "./use/localStorage";
 
 import Search from "@components/Search/search.vue";
 import CharactersTable from "@components/CharactersTable/CharactersTable.vue";
@@ -76,6 +85,7 @@ import {
   SearchByIDsInterface,
   searchByEpisodeInterface,
   ResultsInterface,
+  SearchUpdateInterface,
 } from "@types";
 
 import SETTINGS from "./constans/settings";
@@ -116,6 +126,7 @@ export default defineComponent({
     const isPagination = ref<boolean>(true);
     const sortTypeName = ref<string>(SETTINGS.searchBy.name);
     const activeTabName = ref<string>(DEFAULT_TAB_NAME);
+    const searchValue = ref<string | undefined | null>(null);
 
     provide("localStorageName", SETTINGS.favoritesStoreName);
 
@@ -151,29 +162,39 @@ export default defineComponent({
       isPagination.value = false;
     };
 
-    const updateModelSearch = (updatedSearchValue: string) => {
+    const updateModelSearch = (updatedSearchValue: SearchUpdateInterface) => {
+      const { value, origin } = updatedSearchValue;
+
+      if (origin && origin === "search") {
+        searchValue.value = value;
+        activeTabName.value = SETTINGS.tabs.search.key;
+      } else {
+        searchValue.value = null;
+      }
+
       if (sortTypeName.value === SETTINGS.searchBy.id) {
-        searchByIDs.ids = updatedSearchValue;
+        searchByIDs.ids = value;
         getCharactersByIds();
       }
 
       if (sortTypeName.value === SETTINGS.searchBy.name) {
-        searchByName.name = updatedSearchValue;
+        searchByName.name = value;
         getCharactersByName();
       }
 
       if (sortTypeName.value === SETTINGS.searchBy.episode) {
-        const [param, value] = updatedSearchValue.split(":");
-        if (!value) {
+        const [param, searchValue] = value ? value.split(":") : "";
+
+        if (!searchValue) {
           searchByEpisode.episode = param;
           searchByEpisode.name = "";
         }
         if (param === SETTINGS.searchBy.name) {
-          searchByEpisode.name = value;
+          searchByEpisode.name = searchValue;
           searchByEpisode.episode = "";
         }
         if (param === SETTINGS.searchBy.episode) {
-          searchByEpisode.episode = value;
+          searchByEpisode.episode = searchValue;
           searchByEpisode.name = "";
         }
         getCharactersByEpisode();
@@ -189,13 +210,14 @@ export default defineComponent({
     };
 
     const getCharacters = () => {
-      sortTypeName.value = SETTINGS.searchBy.name;
+      updateModelSearchBy(SETTINGS.searchBy.name);
+
       activeTabName.value = SETTINGS.tabs.all.key;
-      updateModelSearch("");
+      updateModelSearch({ value: "" });
     };
 
     const getFavoriteCharacters = () => {
-      const charactersIDs = JSON.parse(localStorage.getItem(SETTINGS.favoritesStoreName) as string);
+      const charactersIDs = useGetLocalStorage(SETTINGS.favoritesStoreName);
 
       if (isEmptyFavorites.value) {
         return;
@@ -203,7 +225,7 @@ export default defineComponent({
 
       updateModelSearchBy(SETTINGS.searchBy.id);
       activeTabName.value = SETTINGS.tabs.favorites.key;
-      updateModelSearch(charactersIDs.toString());
+      updateModelSearch({ value: charactersIDs.toString() });
     };
 
     getCharactersByName();
@@ -221,6 +243,7 @@ export default defineComponent({
       activeTabName,
       isEmptyFavorites,
       updateIsEmptyFavorites,
+      searchValue,
     };
   },
 });

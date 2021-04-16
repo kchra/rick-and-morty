@@ -43,7 +43,7 @@ export default defineComponent({
     const isEmptySearchValue = computed(() => !search.value);
 
     const submitSearch = () => {
-      emit("modelSearch", search.value);
+      emit("modelSearch", { value: search.value, origin: "search" });
     };
 
     watch(searchBy, (currentSearchBy) => {

@@ -13,6 +13,11 @@ const SETTINGS: SettingsInterface = {
       key: "favorites",
       default: false,
     },
+    search: {
+      name: "Search result for: ",
+      key: "search",
+      default: false,
+    },
   },
   searchBy: {
     episode: "episode",
